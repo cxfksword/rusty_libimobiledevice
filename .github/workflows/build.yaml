@@ -4,80 +4,6 @@ on:
   push:
 
 jobs:
-  # linux:
-  #   name: ${{ matrix.platform.os_name }} with rust ${{ matrix.toolchain }}
-  #   runs-on: ${{ matrix.platform.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       platform:
-  #         - os_name: Linux-x86_64
-  #           os: ubuntu-20.04
-  #           target: x86_64-unknown-linux-gnu
-  #           bin: netmuxd
-  #           name: netmuxd-Linux-x86_64-gnu.tar.gz
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get install -y libssl-dev libplist++-dev libavahi-client-dev libusb-1.0-0-dev
-  #     - run: sudo apt-get install -y musl-tools
-  #       if: contains(matrix.platform.target, 'musl')
-  #     - run: sudo apt-get install -y build-essential
-  #       if: contains(matrix.platform.target, 'gnu')
-  #     - name: Setup Rust toolchain
-  #       uses: dtolnay/rust-toolchain@stable
-  #     - uses: Swatinem/rust-cache@v2
-  #     - name: Build binary
-  #       uses: houseabsolute/actions-rust-cross@v0
-  #       with:
-  #         command: "build"
-  #         target: ${{ matrix.platform.target }}
-  #         args: "--release --features zeroconf --bin netmuxd"
-  #     - name: Publish release artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: netmuxd-${{ matrix.platform.os_name }}
-  #         path: target/${{ matrix.platform.target }}/release/netmuxd
-  # macos:
-  #   name: ${{ matrix.platform.os_name }} with rust ${{ matrix.toolchain }}
-  #   runs-on: ${{ matrix.platform.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       platform:
-  #         - os_name: macOS-x86_64
-  #           os: macOS-latest
-  #           target: x86_64-apple-darwin
-  #           bin: netmuxd
-  #           name: netmuxd-Darwin-x86_64.tar.gz
-  #         # - os_name: macOS-aarch64
-  #         #   os: macOS-latest
-  #         #   target: aarch64-apple-darwin
-  #         #   bin: netmuxd
-  #         #   name: netmuxd-Darwin-aarch64.tar.gz
-  #         #   skip_tests: true
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: install dependencies
-  #       run: |
-  #         brew install libtool autoconf automake openssl
-  #         pip3 install cython
-  #       shell: bash
-  #     - name: Setup Rust toolchain
-  #       uses: dtolnay/rust-toolchain@stable
-  #     - name: Build binary
-  #       uses: houseabsolute/actions-rust-cross@v0
-  #       with:
-  #         command: "build"
-  #         target: ${{ matrix.platform.target }}
-  #         args: "--release --features zeroconf --bin netmuxd"
-  #     - name: Publish release artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: netmuxd-${{ matrix.platform.os_name }}
-  #         path: target/${{ matrix.platform.target }}/release/netmuxd
   windows:
     name: ${{ matrix.platform.os_name }} with rust ${{ matrix.toolchain }}
     runs-on: ${{ matrix.platform.os }}
@@ -91,42 +17,13 @@ jobs:
             bin: netmuxd.exe
             name: netmuxd-Windows-x86_64.zip
     steps:
-      # - uses: msys2/setup-msys2@v2
-      #   with:
-      #     msystem: MINGW64
-      #     release: false
-      #     update: false
-      #     install: >-
-      #       base-devel
-      #       git
-      #       mingw-w64-x86_64-gcc
-      #       make
-      #       libtool
-      #       autoconf
-      #       pkg-config
-      #       automake-wrapper
-      #       cython
-      # - name: prepare environment
-      #   run: |
-      #     dest=`echo MINGW64 |tr [:upper:] [:lower:]`
-      #     echo "dest=$dest" >> $GITHUB_ENV
-      #     echo "target_triplet=`gcc -dumpmachine`" >> $GITHUB_ENV
-      #     git config --global core.autocrlf false
-      # - name: Use strawberry perl for openssl
-      #   uses: shogo82148/actions-setup-perl@v1
-      #   with:
-      #     perl-version: "5.34"
-      #     # distribution: strawberry
-      # - run: echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
-      - run: |
+      - name: Install dependencies for openssl
+        run: |
           vcpkg integrate install
+          vcpkg install openssl:x64-windows-static-md
       - name: Show Perl Version
         run: |
           perl -v
-      # - name: Make openssl-src Use Strawberry Perl
-      #   run: echo OPENSSL_SRC_PERL=$(which perl) >> $GITHUB_ENV
-
-      #     C:/Strawberry/perl/bin/perl -v
       - uses: actions/checkout@v3
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
