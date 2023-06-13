@@ -313,9 +313,8 @@ checksum = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
 
 [[package]]
 name = "plist_plus"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b16146633cd60a7685c71bfa6282921d84895d4e13a73fbe8d2ec2f394898f5c"
+version = "0.2.2"
+source = "git+https://github.com/cxfksword/plist_plus.git?branch=master#b39623e82f271950e8505e9c031ae1b948e5f379"
 dependencies = [
  "autotools",
  "bindgen",
